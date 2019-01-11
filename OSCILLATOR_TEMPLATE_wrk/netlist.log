@@ -1,0 +1,68 @@
+
+Options ResourceUsage=yes UseNutmegFormat=no EnableOptim=no TopDesignName="OSCILLATOR_TEMPLATE_lib:cell_1:schematic" DcopOutputNodeVoltages=yes DcopOutputPinCurrents=yes DcopOutputAllSweepPoints=no DcopOutputDcopType=0
+
+Qind1=25
+Qcap1=40
+Qind2=1e12
+Qcap2=1e12
+OptimGoal:OptimGoal1 Expr="Posc1_mW" SimInstanceName="HB1" Weight=1 \
+SpecLimitLine[1]="OptimGoal1_limit1" 
+SpecLimitLine:"OptimGoal1_limit1" Type="GreaterThan" Min=30 Weight=1.0 
+V_Source:SRC4  N__8 0 Type="V_nTone" Freq[1]=OSCfreq    V[1]=polar(VL1,PL1) V Vdc=0 V Vac=polar(1,0) V SaveCurrent=1 
+V_Source:SRC3  N__2 0 Type="V_nTone" Freq[1]=OSCfreq    V[1]=polar(VS1,PS1) V Vdc=0 V Vac=polar(1,0) V SaveCurrent=1 
+
+Optim:"Optim1" OptimType="hpVMO" ErrorForm="L2" MaxIters=30 P=2 DesiredError=0.0 StatusLevel=4 FinalAnalysis="None" NormalizeGoals=yes SetBestValues=yes SaveSolns=yes SaveGoals=yes SaveOptimVars=no UpdateDataset=yes SaveNominal=no SaveAllIterations=no UseAllOptVars=yes UseAllGoals=yes SaveCurrentEF=no InitialTemp=0.1 NumShootsPerIter=20 EnableCockpit=yes SaveAllTrials=no 
+
+Short:ID  VD N__5 Mode=0 SaveCurrent=yes 
+Short:DC_Block2  VD N__8 Mode=1 
+Short:IG  VG N__6 Mode=0 SaveCurrent=yes 
+Short:DC_Block1  N__2 VG Mode=1 
+Short:DC_Feed1  N__4 N__7 Mode=-1 
+V_Source:SRC2  N__9 0 Type="V_DC" Vdc=Vhigh SaveCurrent=1 
+V_Source:SRC1  N__4 0 Type="V_DC" Vdc=Vlow SaveCurrent=1 
+aele Embed1=zEmbeddingQ(VG[1],VD[1],IG.i[1],ID.i[1],Qind1,Qcap1,OSCfreq,2);Posc1_mW=500*pow(mag(ID.i[1]),2)*Embed1(1,1);Eff1=Posc1_mW/real(VD[0]*ID.i[0]+VG[0]*IG.i[0])/10;
+
+OSCfreq=200 GHz
+Vhigh=1.2
+Vlow=0.75 noopt{ 0.65 to 1 }
+VS1=0.71446 opt{ 0.2 to 1.703 }
+PS1=0
+VL1=0.78579 opt{ 0.5 to 1.5 }
+PL1=161.389 opt{ 50 to 200 }
+HB:HB1 MaxOrder=4 Freq[1]=OSCfreq Order[1]=7 StatusLevel=2 Restart=no OutputPlan="HB1_Output" 
+
+OutputPlan:HB1_Output \
+      Type="Output" \
+      UseNodeNestLevel=yes \
+      NodeNestLevel=2 \
+      UseEquationNestLevel=yes \
+      EquationNestLevel=2 \
+      UseSavedEquationNestLevel=yes \
+      SavedEquationNestLevel=2 \
+      UseDeviceCurrentNestLevel=no \
+      DeviceCurrentNestLevel=0 \
+      DeviceCurrentDeviceType="All" \
+      DeviceCurrentSymSyntax=yes \
+      UseCurrentNestLevel=yes \
+      CurrentNestLevel=999 \
+      UseDeviceVoltageNestLevel=no \
+      DeviceVoltageNestLevel=0 \
+      DeviceVoltageDeviceType="All"
+
+Tran:HB1_tran HB_Sol=1 SteadyState=1 StatusLevel=3 \
+Freq[1]=OSCfreq Order[1]=7 
+
+Component:tahb_HB1 Module="ATAHB" Type="ModelExtractor" \ 
+ Tran_Analysis="HB1_tran" HB_Analysis="HB1" 
+
+simulator lang=spectre
+include "/net/faraday/Faraday/User/Jingjun/ADS/Oscillator/PushPush/.DL/Oscillator_PushPushDiff_schematic_models.scs"
+simulator lang=ads
+Short:DC_Feed2  VD N__10 Mode=-1 
+aele Embed2=yEmbeddingQ(VG[1],VD[1],IG.i[1],ID.i[1],Qind1,Qcap1,OSCfreq,2);Eff2=Posc2_mW/real(VD[0]*ID.i[0]+VG[0]*IG.i[0])/10;Posc2_mW=500*pow(mag(VD[1]),2)*Embed2(1,1);
+
+wireopt=411
+#uselib "ckt" , "P_Probe"
+P_Probe:Pdc_Low  N__7 VG 
+#uselib "ckt" , "P_Probe"
+P_Probe:Pdc_High  N__9 N__10 

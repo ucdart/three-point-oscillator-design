@@ -1,0 +1,39 @@
+
+hpeesofsim (*) 450.shp Jan 21 2016, MINT version 4
+    (64-bit linux built: 01/21/16 15:12:01)
+Copyright 1995 - 2015 Keysight Technologies, 1989-2016.
+
+Processing VAMS source '/net/faraday/Faraday/PDKs/Design_Kits/TSMC/65nm/TSMC_65nm/models/spectre/mosCAPrf_ahdl.va'
+ >vamscomp -amswork /net/faraday/Faraday/User/Jingjun/ADS/Oscillator/OSCILLATOR_TEMPLATE/.netlist.ams_work -S /net/faraday/Faraday/PDKs/Design_Kits/TSMC/65nm/TSMC_65nm/models/spectre/mosCAPrf_ahdl.va
+Warning: Variable 'q' in module 'mosCAPrf' is never set.
+Processing VAMS source '/net/faraday/Faraday/PDKs/Design_Kits/TSMC/65nm/TSMC_65nm/models/spectre/mosCap_ahdl.va'
+ >vamscomp -amswork /net/faraday/Faraday/User/Jingjun/ADS/Oscillator/OSCILLATOR_TEMPLATE/.netlist.ams_work -S /net/faraday/Faraday/PDKs/Design_Kits/TSMC/65nm/TSMC_65nm/models/spectre/mosCap_ahdl.va
+Warning: Variable 'q' in module 'mosCap' is never set.
+Warning detected by hpeesofsim in topology check during circuit set up.
+    Number of nodes with only one device attached (topology corrected): 2
+
+
+HB HB1[1] <OSCILLATOR_TEMPLATE_lib:cell_1:schematic>
+    Number of tones:   1.
+    Number of frequencies:   8.
+    Number of time samples:  16.
+    Number of HB equations (problem size): 360.
+    Auto mode: on.
+    Convergence mode: Auto.
+    Linear solver: direct.
+------------------------------------------------------------------------------
+Newton solver:					
+Iter	KCL residual	Damp %	Sol update
+------------------------------------------------------------------------------
+0.0*	69.3889 aA  	100.0             
+
+Resource usage:
+    User time                 =     1.48 seconds.
+    System time               =     0.16 seconds.
+    Total CPU time            =     1.64 seconds.
+    Simulation stopwatch time =     0.36 seconds.
+    Total stopwatch time      =    10.48 seconds.
+
+    Physical memory used: 184 MBytes.
+    Incremental virtual memory (data only) used:  143 MBytes.
+

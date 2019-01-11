@@ -1,0 +1,151 @@
+defun yEmbeddingQ(V1,V2,I1,I2,Qind,Qcap,freq,load) //load: gate=1,drain=2,gate-drain=3
+{
+	decl Q={Qcap,-Qind};
+	decl V1r=real(V1);
+	decl V1i=imag(V1);
+	decl V2r=real(V2);
+	decl V2i=imag(V2);
+	decl I1r=real(I1);
+	decl I1i=imag(I1);
+	decl I2r=real(I2);
+	decl I2i=imag(I2);
+	decl a,b,c;
+	decl B={{-I1r},{-I1i},{-I2r},{-I2i}};
+	decl Rtn={{0,0,0,0},{0,0,0,0}};
+	decl Q1,Q2,Q3;
+	decl A,D;
+
+	for (a=1;a<3;a++)
+	{		
+		for (b=1;b<3;b++)
+		{			
+			for (c=1;c<3;c++)
+			{
+				Q1=Q(a);
+				Q2=Q(b);
+				Q3=Q(c);
+				if (load==2)
+				
+				A=	{{0,-V1i+V1r/Q1,0,-(V1i-V2i)+(V1r-V2r)/Q3},
+					{0,V1r+V1i/Q1,0,(V1r-V2r)+(V1i-V2i)/Q3},
+					{V2r,0,-V2i+V2r/Q2,-(V2i-V1i)+(V2r-V1r)/Q3},
+					{V2i,0,V2r+V2i/Q2,(V2r-V1r)+(V2i-V1i)/Q3}};
+				
+				elseif (load==3)
+				
+				A=	{{V1r-V2r,-V1i+V1r/Q1,0,-(V1i-V2i)+(V1r-V2r)/Q3},
+					{V1i-V2i,V1r+V1i/Q1,0,(V1r-V2r)+(V1i-V2i)/Q3},
+					{V2r-V1r,0,-V2i+V2r/Q2,-(V2i-V1i)+(V2r-V1r)/Q3},
+					{V2i-V1i,0,V2r+V2i/Q2,(V2r-V1r)+(V2i-V1i)/Q3}};
+				
+				elseif (load==1)
+				
+				A=	{{V1r,-V1i+V1r/Q1,0,-(V1i-V2i)+(V1r-V2r)/Q3},
+					{V1i,V1r+V1i/Q1,0,(V1r-V2r)+(V1i-V2i)/Q3},
+					{0,0,-V2i+V2r/Q2,-(V2i-V1i)+(V2r-V1r)/Q3},
+					{0,0,V2r+V2i/Q2,(V2r-V1r)+(V2i-V1i)/Q3}};
+				
+				//C=inverse(A);
+				D=inverse(A)*B;
+				//fprintf(stdout,"%s\n",identify_value(D));
+				if (Q1*D(2,1)>0 && Q2*D(3,1)>0 && Q3*D(4,1)>0) 
+				{
+					Rtn={{D(1,1),D(2,1),D(3,1),D(4,1)},
+						{1/D(1,1),calComponentY(D(2,1),freq),calComponentY(D(3,1),freq),calComponentY(D(4,1),freq)}};
+					
+					//return D;
+					break;
+				}
+			}
+		}
+	}
+	return Rtn;
+}
+
+defun zEmbeddingQ(V1,V2,I1,I2,Qind,Qcap,freq,load) //with load option
+{
+	decl Q={-Qcap,Qind};
+	decl V1r=real(V1);
+	decl V1i=imag(V1);
+	decl V2r=real(V2);
+	decl V2i=imag(V2);
+	decl I1r=real(I1);
+	decl I1i=imag(I1);
+	decl I2r=real(I2);
+	decl I2i=imag(I2);
+	decl a,b,c;
+	decl B={{-V1r},{-V1i},{-V2r},{-V2i}};
+	decl Rtn={{0,0,0,0},{0,0,0,0}};
+	decl Q1,Q2,Q3;
+	decl A,D;
+
+	for (a=1;a<3;a++)
+	{		
+		for (b=1;b<3;b++)
+		{			
+			for (c=1;c<3;c++)
+			{
+				Q1=Q(a);
+				Q2=Q(b);
+				Q3=Q(c);
+				if (load ==1)
+				{
+					A=	{{I1r,-I1i+I1r/Q1,0,(I1r+I2r)/Q3-(I1i+I2i)},
+						{I1i,I1r+I1i/Q1,0,(I1r+I2r)+(I1i+I2i)/Q3},
+						{0,0,-I2i+I2r/Q2,(I1r+I2r)/Q3-(I1i+I2i)},
+						{0,0,I2r+I2i/Q2,(I2r+I1r)+(I2i+I1i)/Q3}};
+				}
+				elseif (load==2)
+				{
+					A=	{{0,-I1i+I1r/Q1,0,(I1r+I2r)/Q3-(I1i+I2i)},
+						{0,I1r+I1i/Q1,0,(I1r+I2r)+(I1i+I2i)/Q3},
+						{I2r,0,-I2i+I2r/Q2,(I1r+I2r)/Q3-(I1i+I2i)},
+						{I2i,0,I2r+I2i/Q2,(I2r+I1r)+(I2i+I1i)/Q3}};
+				}
+				elseif (load==3)
+				{
+					A=	{{I1r+I2r,-I1i+I1r/Q1,0,(I1r+I2r)/Q3-(I1i+I2i)},
+						{I1i+I2i,I1r+I1i/Q1,0,(I1r+I2r)+(I1i+I2i)/Q3},
+						{I1r+I2r,0,-I2i+I2r/Q2,(I1r+I2r)/Q3-(I1i+I2i)},
+						{I1i+I2i,0,I2r+I2i/Q2,(I2r+I1r)+(I2i+I1i)/Q3}};
+				}
+				
+				D=inverse(A)*B;
+
+				if (Q1*D(2,1)>0 && Q2*D(3,1)>0 && Q3*D(4,1)>0) 
+				{
+					Rtn={{D(1,1),D(2,1),D(3,1),D(4,1)},
+						{D(1,1),calComponentZ(D(2,1),freq),calComponentZ(D(3,1),freq),calComponentZ(D(4,1),freq)}};
+					
+					//return D;
+					break;
+				}
+			}
+		}
+	}
+	return Rtn;
+}
+
+
+
+defun calComponentY(B,freq)
+{	
+	decl Rtn;
+	if (B>0) //capacitor
+		Rtn=B/(2*3.1415926*freq)*1e15;
+	else //inductor
+		Rtn=1/(B*2*3.1415926*freq)*1e12;
+	return Rtn;
+}
+
+defun calComponentZ(X,freq)
+{
+	decl Rtn;
+	if (X>0) //inductor
+		Rtn=X/(2*3.1415926*freq)*1e12;
+	else //capacitor
+		Rtn=1/(X*2*3.1415926*freq)*1e15;
+	return Rtn;
+}
+
+
